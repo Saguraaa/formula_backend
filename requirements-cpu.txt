@@ -1,0 +1,20 @@
+# ============================================================
+# CPU 专用深度学习后端
+#
+# 在 requirements.txt 之外额外安装本文件，用于：
+#   - Cloud Studio 等平台的 CPU 规格工作空间
+#   - 本地没有 NVIDIA 显卡的环境
+#
+# 显式指定 PyTorch CPU 索引，否则 pip 会从 PyPI 默认拉取
+# CUDA 版 torch（体积 2 GB+ 且在没有驱动的机器上无法加载）。
+# ============================================================
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+torch==2.14.0
+torchvision==0.29.0
+
+# PaddlePaddle CPU 版。注意：本地开发环境用的是 GPU 开发版
+# paddlepaddle-gpu==3.0.0.dev20250717，该版本不在 PyPI 上，
+# 因此只能在 CPU / GPU 之间二选一，不能同时安装。
+paddlepaddle==3.0.0

@@ -1,0 +1,18 @@
+# ============================================================
+# Label Studio ML backend 框架
+#
+# 上游仓库：https://github.com/HumanSignal/label-studio-ml-backend
+#
+# 本地开发环境安装的是 editable 版本（2.0.1.dev0），来源是该仓库在本机的
+# 克隆：E:\impfile\imp\DeepLearning\exp3\my-label-studio\label-studio-ml-backend
+#
+# 这里钉到该克隆的准确 commit，而不是跟随默认分支。
+# 原因：不钉 commit 时每次构建都会拉取上游最新代码，
+# 上游一旦改动 API（例如 ModelResponse 的签名），镜像会在某次构建后突然失效，
+# 且无法通过代码回滚复现。钉住后构建结果可复现。
+#
+# 如果上游就是你要的版本，可直接改用 PyPI 发布包并删掉本行的 git 依赖：
+#   label-studio-ml==2.0.1
+# ============================================================
+
+label-studio-ml @ git+https://github.com/HumanSignal/label-studio-ml-backend.git@7b0d01f3593e327ad9cd2a92dbd08aa89f6403f4

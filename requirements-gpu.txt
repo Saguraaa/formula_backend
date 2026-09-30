@@ -1,0 +1,24 @@
+# ============================================================
+# GPU 专用深度学习后端（与本地开发环境完全一致的组合）
+#
+# 在 requirements.txt 之外额外安装本文件，用于：
+#   - Cloud Studio 的 GPU T4 / V100 / A10 等规格实例
+#   - 本地带 NVIDIA 显卡的开发机
+#
+# 版本完全对齐 D:\conda\envs\labelstudioml 的实际安装结果：
+#   torch 2.14.0+cu130 / torchvision 0.29.0+cu130
+#   paddlepaddle-gpu 3.0.0.dev20250717
+#
+# 前置条件：宿主机 NVIDIA 驱动需支持 CUDA 13.0。
+# ============================================================
+
+# PyTorch CUDA 13.0 构建（+cu130 后缀的 wheel 只在 PyTorch 官方索引上）
+--extra-index-url https://download.pytorch.org/whl/cu130
+
+torch==2.14.0+cu130
+torchvision==0.29.0+cu130
+
+# PaddlePaddle GPU 开发版，仅存在于飞桨官方索引，不在 PyPI
+--extra-index-url https://www.paddlepaddle.org.cn/packages/nightly/cu126/
+
+paddlepaddle-gpu==3.0.0.dev20250717

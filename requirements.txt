@@ -1,0 +1,32 @@
+# ============================================================
+# 推理服务运行时依赖（CPU / GPU 通用）
+#
+# 版本取自项目实际使用的 Conda 环境 D:\conda\envs\labelstudioml
+# （Python 3.12.14），是按实际运行验证过的组合，请勿随意升级。
+#
+# 注意：本文件刻意不包含 torch / torchvision 与 paddlepaddle。
+#   - torch 的实际安装版本是 2.14.0+cu130，这是 CUDA 专用 wheel，
+#     直接写进本文件会让 CPU 机器拉取 2 GB+ 的 CUDA 依赖。
+#   - paddlepaddle 的实际安装版本是 3.0.0.dev20250717（GPU 开发版），
+#     该版本不存在于 PyPI，写进本文件会导致安装直接失败。
+#   两者的选择见同目录 requirements-cpu.txt 与 requirements-gpu.txt。
+# ============================================================
+
+ultralytics==8.4.163
+paddleocr==3.7.0
+paddlex==3.7.2
+
+# OpenCV：使用 headless 版本。镜像内没有 GUI/X11，
+# 且 headless 与 ultralytics 兼容（ultralytics 接受 opencv-python 或 headless 任一种）。
+# 本地环境同时存在 opencv-python / opencv-contrib-python / headless 三个包，
+# 属于历史残留，容器里只需要 headless 一个。
+opencv-python-headless==4.12.0.88
+
+numpy==2.2.6
+pandas==3.0.6
+pillow==12.3.0
+PyYAML==6.0.2
+shapely==2.1.2
+pyclipper==1.4.0
+requests==2.34.2
+tqdm==4.70.1

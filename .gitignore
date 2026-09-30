@@ -1,0 +1,63 @@
+# ============================================================
+# 算式检测与文字识别 Backend
+#
+# 入库原则：
+#   进仓库 —— 源代码、依赖声明、Docker 配置、生产权重、文档
+#   不入库 —— 运行时数据、IDE/缓存、数据集图片与标签、训练产物
+#
+# 注意：规则从上到下生效，后面的规则会覆盖前面的。
+# 因此“忽略 / 加回”必须成对书写，且加回规则要放在忽略规则之后。
+# ============================================================
+
+# ---------- IDE ----------
+.idea/
+.vscode/
+*.iml
+*.swp
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ---------- label-studio-ml 运行时数据 ----------
+cache.db
+data/
+*.log
+*.pid
+
+# 保留数据目录占位，避免 clone 后 docker-compose 挂载点不存在
+!data/.gitkeep
+
+# ---------- 模型权重 ----------
+# 生产权重 formula_detector.pt 必须入库：
+#   model.py 硬依赖它，缺少时 setup() 直接抛 FileNotFoundError。
+#   体积 5.2 MB，远低于托管平台单文件上限，无需 Git LFS。
+
+# 训练初始化权重（train/README.md 注明仅供训练初始化使用，ultralytics 也能自动下载）
+yolo11n.pt
+
+# 训练过程产物：阶段权重、checkpoints、runs 全部不入库
+#   train/README.md 已注明 checkpoints/ 不是 backend 加载路径
+train/checkpoints/
+train/runs/
+train/weight/
+*.onnx
+*.engine
+
+# ---------- 数据集 ----------
+# 只忽略图片与标签，保留 data.yaml 与 split_manifest.json，
+# 这样别人 clone 后能知道数据格式与划分，但不会拉取 31 MB 图片。
+yolo_dataset/images/
+yolo_dataset/labels/
+yolo_dataset_manual/images/
+yolo_dataset_manual/labels/
+
+# ---------- 临时产物 ----------
+train/Yolo_demo/1_check.jpg
