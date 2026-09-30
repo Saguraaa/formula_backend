@@ -17,6 +17,19 @@ ENV PYTHONUNBUFFERED=1 \
 # 更新基础系统。
 # git 是必需的：requirements-base.txt 通过 git+https 拉取 label-studio-ml。
 # curl 用于容器内的健康检查。
+#
+# libgl1 / libglib2.0-0 是必需的：最终生效的 cv2 是非 headless 版，
+# 它动态链接 libGL.so.1 与 libgthread-2.0.so.0，而 python:*-slim 精简镜像
+# 不含这些库，缺少时导入 cv2 会直接报：
+#   ImportError: libGL.so.1: cannot open shared object file
+#
+# 为什么无法只靠 Python 层规避：
+#   paddleocr -> paddlex[ocr-core] -> opencv-contrib-python==4.10.0.84（非 headless）
+#   label-studio-ml -> label-studio-sdk -> opencv-python-headless
+#   两个包都写入 site-packages/cv2/，后装者覆盖先装者，无法保证留下哪个。
+#   因此这里补齐系统库，使无论最终是哪个版本都能正常导入。
+#
+# 注意：Debian bookworm 起不再提供 libgl1-mesa-glx，包名是 libgl1。
 RUN --mount=type=cache,target="/var/cache/apt",sharing=locked \
     --mount=type=cache,target="/var/lib/apt/lists",sharing=locked \
     set -eux; \
@@ -24,7 +37,9 @@ RUN --mount=type=cache,target="/var/cache/apt",sharing=locked \
     apt-get upgrade -y; \
     apt-get install --no-install-recommends -y \
         git \
-        curl; \
+        curl \
+        libgl1 \
+        libglib2.0-0; \
     apt-get autoremove -y; \
     rm -rf /var/lib/apt/lists/*
 

@@ -4,7 +4,28 @@ from pathlib import Path
 from threading import Lock
 
 import cv2
-import torch
+
+try:
+    import torch
+except (ImportError, OSError) as exc:
+    # torch 是 ultralytics 的传递依赖，很多环境里会被自动装成 CUDA 版。
+    # 在没有 NVIDIA 驱动 / 完整 CUDA 运行时的机器（例如 CPU 规格实例）上，
+    # 导入会以 undefined symbol（常见为 ncclCommResume）失败，而原始报错
+    # 完全看不出该怎么修，因此这里补一条可操作的提示。
+    #
+    # 同时捕获 OSError：CPython 通常把扩展模块加载失败包装成 ImportError
+    # （见 importlib._bootstrap_external），但该行为属实现细节，
+    # 多捕获一种异常没有代价，可避免包装在最坏情况下失效。
+    raise ImportError(
+        f"导入 torch 失败：{exc}\n"
+        "若报错含 undefined symbol（例如 ncclCommResume），说明装的是 CUDA 版 "
+        "torch，但它依赖的 CUDA/NCCL 库缺失或版本不匹配。\n"
+        "在没有 NVIDIA 显卡的机器上，请改用 CPU 版：\n"
+        "  pip install --force-reinstall --index-url "
+        "https://download.pytorch.org/whl/cpu torch torchvision\n"
+        "详见 README 的「部署到 Cloud Studio」章节。"
+    ) from exc
+
 from ultralytics import YOLO
 from paddleocr import PaddleOCR
 

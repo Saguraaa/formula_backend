@@ -1,24 +1,41 @@
 # ============================================================
-# GPU 专用深度学习后端（与本地开发环境完全一致的组合）
+# GPU 专用深度学习后端（与本地开发环境一致的组合）
 #
-# 在 requirements.txt 之外额外安装本文件，用于：
-#   - Cloud Studio 的 GPU T4 / V100 / A10 等规格实例
-#   - 本地带 NVIDIA 显卡的开发机
+# 适用：Cloud Studio 的 GPU T4 / V100 / A10 等规格实例、
+#       本地带 NVIDIA 显卡的开发机。
 #
-# 版本完全对齐 D:\conda\envs\labelstudioml 的实际安装结果：
+# 版本对齐 D:\conda\envs\labelstudioml：
 #   torch 2.14.0+cu130 / torchvision 0.29.0+cu130
 #   paddlepaddle-gpu 3.0.0.dev20250717
 #
-# 前置条件：宿主机 NVIDIA 驱动需支持 CUDA 13.0。
 # ============================================================
-
-# PyTorch CUDA 13.0 构建（+cu130 后缀的 wheel 只在 PyTorch 官方索引上）
---extra-index-url https://download.pytorch.org/whl/cu130
+# 前置条件：宿主机 NVIDIA 驱动需支持 CUDA 13.0
+# ============================================================
+#
+# 先用以下命令确认驱动版本，再决定是否走 GPU 路线：
+#   nvidia-smi
+# 若该命令不存在或报错，说明这台机器没有可用 GPU，
+# 请改用 requirements-cpu.txt 的 CPU 路线，否则会得到
+#   ImportError: libtorch_cuda.so: undefined symbol: ncclCommResume
+#
+# ============================================================
+# 【重要】torch 与 paddlepaddle-gpu 来自两个不同的索引，
+# 不能让它们同时可见（否则 pip 的依赖解析会跨索引取错版本）。
+# 请分两条命令安装：
+# ============================================================
+#
+#   1) pip install --index-url https://download.pytorch.org/whl/cu130 \
+#          torch==2.14.0+cu130 torchvision==0.29.0+cu130
+#   2) pip install -r requirements-base.txt -r requirements.txt
+#   3) pip install --index-url \
+#          https://www.paddlepaddle.org.cn/packages/nightly/cu126/ \
+#          paddlepaddle-gpu==3.0.0.dev20250717
+#
+# ============================================================
+# 以下行仅作版本记录；实际安装请按上面 1)~3) 执行。
+# ============================================================
 
 torch==2.14.0+cu130
 torchvision==0.29.0+cu130
-
-# PaddlePaddle GPU 开发版，仅存在于飞桨官方索引，不在 PyPI
---extra-index-url https://www.paddlepaddle.org.cn/packages/nightly/cu126/
 
 paddlepaddle-gpu==3.0.0.dev20250717

@@ -16,10 +16,17 @@ ultralytics==8.4.163
 paddleocr==3.7.0
 paddlex==3.7.2
 
-# OpenCV：使用 headless 版本。镜像内没有 GUI/X11，
-# 且 headless 与 ultralytics 兼容（ultralytics 接受 opencv-python 或 headless 任一种）。
-# 本地环境同时存在 opencv-python / opencv-contrib-python / headless 三个包，
-# 属于历史残留，容器里只需要 headless 一个。
+# OpenCV：这里显式要求 headless 版，但**不能指望它成为最终生效的 cv2**。
+#
+# 依赖树中同时存在两个互斥的 opencv 发行版：
+#   paddleocr -> paddlex[ocr-core] -> opencv-contrib-python==4.10.0.84（非 headless）
+#   label-studio-ml -> label-studio-sdk -> opencv-python-headless
+# 两者都写入 site-packages/cv2/，后安装的会覆盖先安装的，
+# 因此无法仅靠本文件决定最终留下哪一个。
+#
+# 结论：Docker 镜像必须安装 libgl1 与 libglib2.0-0 系统库
+# （见 Dockerfile），否则当非 headless 版胜出时导入 cv2 会失败：
+#   ImportError: libGL.so.1: cannot open shared object file
 opencv-python-headless==4.12.0.88
 
 numpy==2.2.6
